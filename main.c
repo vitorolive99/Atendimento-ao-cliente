@@ -71,7 +71,7 @@ void exibeFila(tipoFila *listaEnc)
     printf("\n   Previsao de atendimento\n");
     while (atual != NULL)
     {
-        printf("\n Cliente: %s\n Senha: %d", atual->nome, atual->senha);
+        printf("\n Cliente: %s\n Senha: %d\n", atual->nome, atual->senha);
         atual = atual->proxNo;
     }
 }
@@ -89,13 +89,10 @@ void divideFila(tipoFila *filaUnica, tipoFila *fila1, tipoFila *fila2)
     {
         if (atual == NULL)
             break;
-        novoNo1 = (tipoNo *)malloc(sizeof(tipoNo));
-        strcpy(novoNo1->nome, atual->nome);
         insereNoFim(fila1, atual->nome, atual->senha, atual->priori);
         atual = atual->proxNo;
         if (atual == NULL)
             break;
-        novoNo2 = (tipoNo *)malloc(sizeof(tipoNo));
         insereNoFim(fila2, atual->nome, atual->senha, atual->priori);
         atual = atual->proxNo;
 
@@ -109,7 +106,7 @@ int main()
     tipoFila fila1;
     tipoFila fila2;
     inicializa(&filaUnica);
-    int senha;
+    int senha=1000;
     char nome[50];
     int op, priori;
 
@@ -118,12 +115,12 @@ int main()
         printf("\nDo");
         printf("\n\tAtendimento ao Cliente");
         printf("\n\t1 - Cadastrar cliente na fila original.");
-        printf("\n\t2 - Exibir previs�o de atendimento do cliente na fila original.");
+        printf("\n\t2 - Exibir previsao de atendimento do cliente na fila original.");
         printf("\n\t3 - Dividir a fila de clientes entre os dois caixas.");
-        printf("\n\t4 - Exibir previs�o de atendimento do cliente nas duas filas que foram divididas.");
+        printf("\n\t4 - Exibir previsao de atendimento do cliente nas duas filas que foram divididas.");
         printf("\n\t5 - Atender cliente.");
         printf("\n\t0 - Encerra o programa");
-        printf("\n\tDigite sua op��o: ");
+        printf("\n\tDigite sua opcao: ");
         scanf("%d", &op);
         switch (op)
         {
@@ -132,9 +129,10 @@ int main()
             scanf("%s", nome);
             printf("\n ---Atendimento prioritario?\n ---1-SIM\n ---0-NAO\n");
             scanf("%d", &priori);
-            printf("\nDigite a senha de atendimento: ");
-            scanf("%d", &senha);
+            //printf("\nDigite a senha de atendimento: ");
+            //scanf("%d", &senha);
             insereNoFim(&filaUnica, nome, senha, priori);
+            senha++;
             break;
         case 2:
             exibeFila(&filaUnica);
