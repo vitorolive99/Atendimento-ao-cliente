@@ -2,30 +2,34 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct no{
-    char *nome[50];
+typedef struct no
+{
+    char nome[50];
     int senha;
     int priori;
     struct no *proxNo;
-}tipoNo;
+} tipoNo;
 
-typedef struct fila{
+typedef struct fila
+{
     tipoNo *inicio;
     tipoNo *fim;
     int quant;
-}tipoFila;
+} tipoFila;
 
-void inicializa(tipoFila *lista){
+void inicializa(tipoFila *lista)
+{
     lista->fim = NULL;
     lista->inicio = NULL;
     lista->quant = 0;
     printf("1");
 }
 
-int insereFilaVazia(tipoFila *listaEnc, char *nome, int senha, int priori){
+int insereFilaVazia(tipoFila *listaEnc, char *nome, int senha, int priori)
+{
     tipoNo *novoNo;
-    novoNo = (tipoNo*) malloc(sizeof(tipoNo));
-    if(novoNo == NULL)
+    novoNo = (tipoNo *)malloc(sizeof(tipoNo));
+    if (novoNo == NULL)
         return 0;
     strcpy(novoNo->nome, nome);
     novoNo->senha = senha;
@@ -38,19 +42,21 @@ int insereFilaVazia(tipoFila *listaEnc, char *nome, int senha, int priori){
     return 1;
 }
 
-int insereNoFim(tipoFila *listaEnc, char *nome, int senha, int priori){
+int insereNoFim(tipoFila *listaEnc, char *nome, int senha, int priori)
+{
     tipoNo *novoNo;
-    if(listaEnc->inicio == NULL)
+    if (listaEnc->inicio == NULL)
         insereFilaVazia(listaEnc, nome, senha, priori);
-    else{
-        novoNo = (tipoNo*) malloc(sizeof(tipoNo));
-        if(novoNo == NULL)
+    else
+    {
+        novoNo = (tipoNo *)malloc(sizeof(tipoNo));
+        if (novoNo == NULL)
             return 0;
         strcpy(novoNo->nome, nome);
         novoNo->senha = senha;
         printf("\n%dfim\n", senha);
         novoNo->priori = priori;
-        novoNo->proxNo=NULL;
+        novoNo->proxNo = NULL;
         listaEnc->fim->proxNo = novoNo;
         listaEnc->fim = novoNo;
         listaEnc->quant++;
@@ -58,70 +64,74 @@ int insereNoFim(tipoFila *listaEnc, char *nome, int senha, int priori){
     return 1;
 }
 
-void exibeFila (tipoFila *listaEnc)
+void exibeFila(tipoFila *listaEnc)
 {
     tipoNo *atual;
     atual = listaEnc->inicio;
     printf("\n   Previsao de atendimento\n");
-    while(atual != NULL)
+    while (atual != NULL)
     {
         printf("\n Cliente: %s\n Senha: %d", atual->nome, atual->senha);
         atual = atual->proxNo;
     }
 }
 
-void divideFila (tipoFila *filaUnica, tipoFila *fila1, tipoFila *fila2)
+void divideFila(tipoFila *filaUnica, tipoFila *fila1, tipoFila *fila2)
 {
     tipoNo *atual;
     tipoNo *novoNo1;
     tipoNo *novoNo2;
+
     atual = filaUnica->inicio;
     printf("%d", atual->senha);
-    printf("passsou");
+    printf("passsou na funcao dividefila");
     while (1)
     {
-        if(atual == NULL)break;
-        novoNo1 = (tipoNo*) malloc(sizeof(tipoNo));
+        if (atual == NULL)
+            break;
+        novoNo1 = (tipoNo *)malloc(sizeof(tipoNo));
         strcpy(novoNo1->nome, atual->nome);
         insereNoFim(fila1, atual->nome, atual->senha, atual->priori);
         atual = atual->proxNo;
-        if(atual == NULL)break;
-        novoNo2 = (tipoNo*) malloc(sizeof(tipoNo));
+        if (atual == NULL)
+            break;
+        novoNo2 = (tipoNo *)malloc(sizeof(tipoNo));
         insereNoFim(fila2, atual->nome, atual->senha, atual->priori);
         atual = atual->proxNo;
 
-        printf("passsou");
+        printf("passsou no while");
     }
 }
 
 int main()
 {
-    tipoFila *filaUnica;
-    tipoFila *fila1;
-    tipoFila *fila2;
+    tipoFila filaUnica;
+    tipoFila fila1;
+    tipoFila fila2;
     inicializa(&filaUnica);
-    inicializa(&fila1);
-    inicializa(&fila2);
     int senha;
     char nome[50];
     int op, priori;
 
-    do{
+    do
+    {
+        printf("\nDo");
         printf("\n\tAtendimento ao Cliente");
         printf("\n\t1 - Cadastrar cliente na fila original.");
-        printf("\n\t2 - Exibir previsão de atendimento do cliente na fila original.");
+        printf("\n\t2 - Exibir previsï¿½o de atendimento do cliente na fila original.");
         printf("\n\t3 - Dividir a fila de clientes entre os dois caixas.");
-        printf("\n\t4 - Exibir previsão de atendimento do cliente nas duas filas que foram divididas.");
+        printf("\n\t4 - Exibir previsï¿½o de atendimento do cliente nas duas filas que foram divididas.");
         printf("\n\t5 - Atender cliente.");
         printf("\n\t0 - Encerra o programa");
-        printf("\n\tDigite sua opção: ");
-        scanf("%d",&op);
-        switch(op){
+        printf("\n\tDigite sua opï¿½ï¿½o: ");
+        scanf("%d", &op);
+        switch (op)
+        {
         case 1:
             printf("\n ---Digite o nome do cliente: ");
             scanf("%s", nome);
             printf("\n ---Atendimento prioritario?\n ---1-SIM\n ---0-NAO\n");
-            scanf("%d",&priori);
+            scanf("%d", &priori);
             printf("\nDigite a senha de atendimento: ");
             scanf("%d", &senha);
             insereNoFim(&filaUnica, nome, senha, priori);
@@ -130,6 +140,8 @@ int main()
             exibeFila(&filaUnica);
             break;
         case 3:
+            inicializa(&fila1);
+            inicializa(&fila2);
             divideFila(&filaUnica, &fila1, &fila2);
             printf("voltou");
             break;
@@ -146,7 +158,7 @@ int main()
         default:
             printf("Opcao invalida!!!");
         }
-    }while(op != 0);
+    } while (op != 0);
 
     return 0;
 }
