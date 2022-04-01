@@ -79,9 +79,6 @@ void exibeFila(tipoFila *listaEnc)
 void divideFila(tipoFila *filaUnica, tipoFila *fila1, tipoFila *fila2)
 {
     tipoNo *atual;
-    tipoNo *novoNo1;
-    tipoNo *novoNo2;
-
     atual = filaUnica->inicio;
     printf("%d", atual->senha);
     printf("passsou na funcao dividefila");
