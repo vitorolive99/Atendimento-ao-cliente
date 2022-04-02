@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1648863202 source:d:\sistema de informação\estrutura de dados\atendimento_de_clientes\atendimento-ao-cliente\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+

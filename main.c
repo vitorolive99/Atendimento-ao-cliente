@@ -6,7 +6,7 @@ typedef struct no
 {
     char nome[50];
     int senha;
-    int priori;
+    char priori[3];
     struct no *proxNo;
 } tipoNo;
 
@@ -17,15 +17,19 @@ typedef struct fila
     int quant;
 } tipoFila;
 
+void printChamada (tipoNo *atual, int caixa)
+{
+    printf("\n\tCliente: %s\n\t Senha: %d\n\tPrioridade: %s\n\tCAIXA %d\n", atual->nome, atual->senha, atual->priori, caixa);
+}
+
 void inicializa(tipoFila *lista)
 {
     lista->fim = NULL;
     lista->inicio = NULL;
     lista->quant = 0;
-    printf("1");
 }
 
-int insereFilaVazia(tipoFila *listaEnc, char *nome, int senha, int priori)
+int insereFilaVazia(tipoFila *listaEnc, char *nome, int senha, char *priori)
 {
     tipoNo *novoNo;
     novoNo = (tipoNo *)malloc(sizeof(tipoNo));
@@ -33,8 +37,7 @@ int insereFilaVazia(tipoFila *listaEnc, char *nome, int senha, int priori)
         return 0;
     strcpy(novoNo->nome, nome);
     novoNo->senha = senha;
-    printf("\n%dvazio\n", novoNo->senha);
-    novoNo->priori = priori;
+    strcpy(novoNo->priori, priori);
     novoNo->proxNo = NULL;
     listaEnc->inicio = novoNo;
     listaEnc->fim = novoNo;
@@ -42,7 +45,7 @@ int insereFilaVazia(tipoFila *listaEnc, char *nome, int senha, int priori)
     return 1;
 }
 
-int insereNoFim(tipoFila *listaEnc, char *nome, int senha, int priori)
+int insereNoFim(tipoFila *listaEnc, char *nome, int senha, char *priori)
 {
     tipoNo *novoNo;
     if (listaEnc->inicio == NULL)
@@ -54,8 +57,7 @@ int insereNoFim(tipoFila *listaEnc, char *nome, int senha, int priori)
             return 0;
         strcpy(novoNo->nome, nome);
         novoNo->senha = senha;
-        printf("\n%dfim\n", senha);
-        novoNo->priori = priori;
+        strcpy(novoNo->priori, priori);
         novoNo->proxNo = NULL;
         listaEnc->fim->proxNo = novoNo;
         listaEnc->fim = novoNo;
@@ -71,7 +73,7 @@ void exibeFila(tipoFila *listaEnc)
     printf("\n   Previsao de atendimento\n");
     while (atual != NULL)
     {
-        printf("\n Cliente: %s\n Senha: %d\n", atual->nome, atual->senha);
+        printf("\nCliente: %s\nSenha: %d\nPrioridade: %s", atual->nome, atual->senha, atual->priori);
         atual = atual->proxNo;
     }
 }
@@ -80,8 +82,6 @@ void divideFila(tipoFila *filaUnica, tipoFila *fila1, tipoFila *fila2)
 {
     tipoNo *atual;
     atual = filaUnica->inicio;
-    printf("%d", atual->senha);
-    printf("passsou na funcao dividefila");
     while (1)
     {
         if (atual == NULL)
@@ -92,8 +92,68 @@ void divideFila(tipoFila *filaUnica, tipoFila *fila1, tipoFila *fila2)
             break;
         insereNoFim(fila2, atual->nome, atual->senha, atual->priori);
         atual = atual->proxNo;
+    }
+}
 
-        printf("passsou no while");
+void removeDoInicio(tipoFila *listaEnc){
+    tipoNo *atual;
+    atual = listaEnc->inicio;
+    listaEnc->inicio = atual->proxNo;
+    listaEnc->quant--;
+    free(atual);
+}
+
+void removeFilaUnica(tipoFila *filaUnica, int senha)
+{
+    tipoNo *atual, *anterior;
+    anterior = NULL;
+    atual = filaUnica->inicio;
+    if(atual->senha == senha){
+        removeDoInicio(filaUnica);
+        return;
+    }
+    while(atual->senha != senha){
+        anterior = atual;
+        atual = atual->proxNo;
+    }
+    anterior->proxNo = atual->proxNo;
+    free(atual);
+}
+
+int atendeCliente (tipoFila *fila, tipoFila *filaUnica, int caixa, char *priori)
+{
+    int senha;
+    tipoNo *atual, *anterior;
+    anterior = NULL;
+    atual = fila->inicio;
+    if(!strcmp(atual->priori, priori) || fila->inicio == fila->fim){
+        senha = atual->senha;
+        removeFilaUnica(filaUnica, senha);
+        printChamada(atual, caixa);
+        removeDoInicio(fila);
+        return 1;
+    }
+
+    while(atual != NULL){
+        if (!strcmp(atual->priori, priori)){
+            break;
+        }
+        anterior = atual;
+        atual = atual->proxNo;
+    }
+    if(atual == NULL){
+        atual = fila->inicio;
+        senha = atual->senha;
+        removeFilaUnica(filaUnica, senha);
+        printChamada(atual, caixa);
+        removeDoInicio(fila);
+    }else{
+    senha = atual->senha;
+    removeFilaUnica(filaUnica, senha);
+    printChamada(atual, caixa);
+    anterior->proxNo = atual->proxNo;
+    free(atual);
+    return 1;
     }
 }
 
@@ -105,11 +165,10 @@ int main()
     inicializa(&filaUnica);
     int senha=1000;
     char nome[50];
-    int op, priori;
+    int op, priori,aux,cont=0;
 
     do
     {
-        printf("\nDo");
         printf("\n\tAtendimento ao Cliente");
         printf("\n\t1 - Cadastrar cliente na fila original.");
         printf("\n\t2 - Exibir previsao de atendimento do cliente na fila original.");
@@ -126,9 +185,10 @@ int main()
             scanf("%s", nome);
             printf("\n ---Atendimento prioritario?\n ---1-SIM\n ---0-NAO\n");
             scanf("%d", &priori);
-            //printf("\nDigite a senha de atendimento: ");
-            //scanf("%d", &senha);
-            insereNoFim(&filaUnica, nome, senha, priori);
+            if(priori == 1)
+                insereNoFim(&filaUnica, nome, senha, "SIM");
+            else
+                insereNoFim(&filaUnica, nome, senha, "NAO");
             senha++;
             break;
         case 2:
@@ -147,9 +207,36 @@ int main()
             exibeFila(&fila2);
             break;
         case 5:
+            printf("\n\t1 - Caixa 1");
+            printf("\n\t2 - Caixa 2\n");
+            scanf("%d", &aux);
+            if(aux == 1){
+                if(cont == 2){
+                    atendeCliente(&fila1, &filaUnica, aux, "NAO");
+                    cont=0;
+                }
+                else{
+                    printf("\nprintElse");
+                    atendeCliente(&fila1, &filaUnica, aux, "SIM");
+                    cont++;
+                }
+            }
+            if(aux == 2)
+            {
+                if(cont == 2){
+                    atendeCliente(&fila2, &filaUnica, aux, "NAO");
+                    cont=0;
+                }
+                else{
+                    printf("\nprintElse");
+                    atendeCliente(&fila2, &filaUnica, aux, "SIM");
+                    cont++;
+                }
+            }
             break;
         case 0:
             printf("\nEncerrando Programa!!!");
+            break;
         default:
             printf("Opcao invalida!!!");
         }
