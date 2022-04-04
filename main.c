@@ -19,7 +19,9 @@ typedef struct fila
 
 void printChamada (tipoNo *atual, int caixa)
 {
-    printf("\n\tCliente: %s\n\t Senha: %d\n\tPrioridade: %s\n\tCAIXA %d\n", atual->nome, atual->senha, atual->priori, caixa);
+    printf("\n\tCliente do caixa %d atendido com sucesso!\n",caixa);
+    printf("\n\tCliente: %s\n\tSenha: %d\n\tPrioridade: %s\n\tCAIXA %d\n", atual->nome, atual->senha, atual->priori, caixa);
+
 }
 
 void inicializa(tipoFila *lista)
@@ -70,10 +72,10 @@ void exibeFila(tipoFila *listaEnc)
 {
     tipoNo *atual;
     atual = listaEnc->inicio;
-    printf("\n   Previsao de atendimento\n");
+    printf("\n\tPrevisao de atendimento\n");
     while (atual != NULL)
     {
-        printf("\nCliente: %s\nSenha: %d\nPrioridade: %s", atual->nome, atual->senha, atual->priori);
+        printf("\n\tCliente: %s\n\tSenha: %d\n\tPrioridade: %s\n", atual->nome, atual->senha, atual->priori);
         atual = atual->proxNo;
     }
 }
@@ -119,6 +121,14 @@ void removeFilaUnica(tipoFila *filaUnica, int senha)
     anterior->proxNo = atual->proxNo;
     free(atual);
 }
+int estarVazia(tipoFila* list ){
+    if(list -> inicio == NULL){
+        return 1;
+    }
+        return 0;
+}
+
+
 
 int atendeCliente (tipoFila *fila, tipoFila *filaUnica, int caixa, char *priori)
 {
@@ -140,8 +150,7 @@ int atendeCliente (tipoFila *fila, tipoFila *filaUnica, int caixa, char *priori)
         }
         anterior = atual;
         atual = atual->proxNo;
-    }
-    if(atual == NULL){
+    }if(atual == NULL){
         atual = fila->inicio;
         senha = atual->senha;
         removeFilaUnica(filaUnica, senha);
@@ -155,6 +164,7 @@ int atendeCliente (tipoFila *fila, tipoFila *filaUnica, int caixa, char *priori)
     free(atual);
     return 1;
     }
+
 }
 
 int main()
@@ -169,21 +179,22 @@ int main()
 
     do
     {
-        printf("\n\tAtendimento ao Cliente");
-        printf("\n\t1 - Cadastrar cliente na fila original.");
+        printf("\n\n\tAtendimento ao Cliente");
+        printf("\n\n\t1 - Cadastrar cliente na fila original.");
         printf("\n\t2 - Exibir previsao de atendimento do cliente na fila original.");
         printf("\n\t3 - Dividir a fila de clientes entre os dois caixas.");
         printf("\n\t4 - Exibir previsao de atendimento do cliente nas duas filas que foram divididas.");
         printf("\n\t5 - Atender cliente.");
-        printf("\n\t0 - Encerra o programa");
-        printf("\n\tDigite sua opcao: ");
+        printf("\n\n\t0 - Encerra o programa");
+        printf("\n\n\tDigite sua opcao: ");
         scanf("%d", &op);
         switch (op)
         {
         case 1:
-            printf("\n ---Digite o nome do cliente: ");
+            printf("\n\t---Digite o nome do cliente: ");
             scanf("%s", nome);
-            printf("\n ---Atendimento prioritario?\n ---1-SIM\n ---0-NAO\n");
+            printf("\n\t---Atendimento prioritario?\n\t---1-SIM\n\t---0-NAO\n");
+            printf("\n\tDigite sua escolha: ");
             scanf("%d", &priori);
             if(priori == 1)
                 insereNoFim(&filaUnica, nome, senha, "SIM");
@@ -198,47 +209,67 @@ int main()
             inicializa(&fila1);
             inicializa(&fila2);
             divideFila(&filaUnica, &fila1, &fila2);
-            printf("voltou");
+            printf("\n\t--Fila dividida com sucesso--\n");
             break;
         case 4:
-            printf("\nFila 1:\n");
+            printf("\n\tFila 1:\n");
             exibeFila(&fila1);
-            printf("\nFila 2:\n");
+            printf("\n\tFila 2:\n");
             exibeFila(&fila2);
             break;
         case 5:
             printf("\n\t1 - Caixa 1");
             printf("\n\t2 - Caixa 2\n");
+            printf("\n\tEscolha: ");
             scanf("%d", &aux);
             if(aux == 1){
                 if(cont == 2){
+                   if(!estarVazia(&fila1)){
                     atendeCliente(&fila1, &filaUnica, aux, "NAO");
                     cont=0;
+                   }
+                    else{
+                        printf("\n\tTodos os clientes desta fila foram atendidos com sucesso!");
+                        }
+
                 }
                 else{
-                    printf("\nprintElse");
+                    if(!estarVazia(&fila1)){
                     atendeCliente(&fila1, &filaUnica, aux, "SIM");
-                    cont++;
+                    cont=0;
+                   }
+                    else{
+                        printf("\n\tTodos os clientes desta fila foram atendidos com sucesso!");
+                        }
                 }
             }
             if(aux == 2)
             {
                 if(cont == 2){
+                    if(!estarVazia(&fila2)){
                     atendeCliente(&fila2, &filaUnica, aux, "NAO");
                     cont=0;
+                   }
+                    else{
+                        printf("\n\tTodos os clientes desta fila foram atendidos com sucesso!");
+                        }
                 }
                 else{
-                    printf("\nprintElse");
+                   if(!estarVazia(&fila2)){
                     atendeCliente(&fila2, &filaUnica, aux, "SIM");
-                    cont++;
+                    cont=0;
+                   }
+                    else{
+                        printf("\n\tTodos os clientes desta fila foram atendidos com sucesso!");
+                        }
                 }
             }
             break;
         case 0:
-            printf("\nEncerrando Programa!!!");
+            printf("\n\tEncerrando Programa!!!");
             break;
         default:
-            printf("Opcao invalida!!!");
+            printf("\n\tOpcao invalida!!!\n");
         }
     } while (op != 0);
 
